@@ -4,7 +4,6 @@ import elf4j.Level;
 import elf4j.Logger;
 import lombok.NonNull;
 import lombok.ToString;
-import lombok.Value;
 import net.jcip.annotations.Immutable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.message.FormattedMessage;
@@ -21,11 +20,11 @@ import static elf4j.Level.*;
 
 @Immutable
 @ToString
-public class Log4jElf4jLogger implements Logger {
-    private static final Map<LoggerKey, Logger> CACHED_LOGGERS = new ConcurrentHashMap<>();
+class Log4jElf4jLogger implements Logger {
+    private static final EnumMap<Level, Map<String, Log4jElf4jLogger>> CACHED_LOGGERS = initCachedLoggers();
     private static final Level DEFAULT_LEVEL = INFO;
     private static final int INSTANCE_CALLER_DEPTH = 4;
-    private static final EnumMap<Level, org.apache.logging.log4j.Level> LEVEL_MAP = byElf4jLevel();
+    private static final EnumMap<Level, org.apache.logging.log4j.Level> LEVEL_MAP = setLevelMap();
     @NonNull private final String name;
     @NonNull private final Level level;
     private final ExtendedLogger extendedLogger;
@@ -36,20 +35,39 @@ public class Log4jElf4jLogger implements Logger {
         this.extendedLogger = LogManager.getContext().getLogger(name);
     }
 
-    public static Logger instance() {
+    static Log4jElf4jLogger instance() {
         return getLogger(StackLocatorUtil.getCallerClass(INSTANCE_CALLER_DEPTH).getName());
     }
 
-    public static Logger instance(String name) {
+    static Log4jElf4jLogger instance(String name) {
         return getLogger(name == null ? StackLocatorUtil.getCallerClass(INSTANCE_CALLER_DEPTH).getName() : name);
     }
 
-    public static Logger instance(Class<?> clazz) {
+    static Log4jElf4jLogger instance(Class<?> clazz) {
         return getLogger(
                 clazz == null ? StackLocatorUtil.getCallerClass(INSTANCE_CALLER_DEPTH).getName() : clazz.getName());
     }
 
-    private static EnumMap<Level, org.apache.logging.log4j.Level> byElf4jLevel() {
+    private static Log4jElf4jLogger getLogger(@NonNull String name, @NonNull Level level) {
+        return CACHED_LOGGERS.get(level).computeIfAbsent(name, k -> new Log4jElf4jLogger(k, level));
+    }
+
+    private static Log4jElf4jLogger getLogger(String name) {
+        return getLogger(name, DEFAULT_LEVEL);
+    }
+
+    private static EnumMap<Level, Map<String, Log4jElf4jLogger>> initCachedLoggers() {
+        EnumMap<Level, Map<String, Log4jElf4jLogger>> cachedLoggers = new EnumMap<>(Level.class);
+        cachedLoggers.put(TRACE, new ConcurrentHashMap<>());
+        cachedLoggers.put(DEBUG, new ConcurrentHashMap<>());
+        cachedLoggers.put(INFO, new ConcurrentHashMap<>());
+        cachedLoggers.put(WARN, new ConcurrentHashMap<>());
+        cachedLoggers.put(ERROR, new ConcurrentHashMap<>());
+        cachedLoggers.put(OFF, new ConcurrentHashMap<>());
+        return cachedLoggers;
+    }
+
+    private static EnumMap<Level, org.apache.logging.log4j.Level> setLevelMap() {
         EnumMap<Level, org.apache.logging.log4j.Level> levelMap = new EnumMap<>(Level.class);
         levelMap.put(TRACE, org.apache.logging.log4j.Level.TRACE);
         levelMap.put(DEBUG, org.apache.logging.log4j.Level.DEBUG);
@@ -58,14 +76,6 @@ public class Log4jElf4jLogger implements Logger {
         levelMap.put(ERROR, org.apache.logging.log4j.Level.ERROR);
         levelMap.put(OFF, org.apache.logging.log4j.Level.OFF);
         return levelMap;
-    }
-
-    private static Logger getLogger(@NonNull String name, @NonNull Level level) {
-        return CACHED_LOGGERS.computeIfAbsent(new LoggerKey(name, level), k -> new Log4jElf4jLogger(k.name, k.level));
-    }
-
-    private static Logger getLogger(String name) {
-        return getLogger(name, DEFAULT_LEVEL);
     }
 
     @Override
@@ -173,11 +183,5 @@ public class Log4jElf4jLogger implements Logger {
 
     private boolean isLevelDisabled() {
         return !extendedLogger.isEnabled(LEVEL_MAP.get(this.level));
-    }
-
-    @Value
-    private static class LoggerKey {
-        @NonNull String name;
-        @NonNull Level level;
     }
 }
