@@ -8,7 +8,7 @@ Java ([ELF4J](https://github.com/elf4j/elf4j-api)) SPI
 As a service provider of the Easy Logging Facade for Java (ELF4J) SPI, I want to bind the logging capabilities of LOG4J
 to the ELF4J client application via
 the [Java Service Provider Interfaces (SPI)](https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html) mechanism,
-so that any application using the ELF4J API for logging can decide to use the LOG4J features at deployment time without
+so that any application using the ELF4J API for logging can decide to use the LOG4J framework at deployment time without
 code change.
 
 ## Prerequisite
