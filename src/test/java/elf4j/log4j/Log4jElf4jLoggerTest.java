@@ -116,13 +116,4 @@ class Log4jElf4jLoggerTest {
             assertEquals("", Logger.instance(empty).getName());
         }
     }
-
-    @Nested
-    class placeholder {
-
-        @Test
-        void escapeToken() {
-            LOGGER.atInfo().log("should not take '{}' as token when escaped is configured true", "a11111");
-        }
-    }
 }
