@@ -24,8 +24,8 @@ import static elf4j.Level.*;
 public class Log4jElf4jLogger implements Logger {
     private static final Map<LoggerKey, Logger> CACHED_LOGGERS = new ConcurrentHashMap<>();
     private static final Level DEFAULT_LEVEL = INFO;
-    private static final EnumMap<Level, org.apache.logging.log4j.Level> ELF4J_TO_LOG4J_LEVELS = levelMap();
     private static final int INSTANCE_CALLER_DEPTH = 4;
+    private static final EnumMap<Level, org.apache.logging.log4j.Level> LEVEL_MAP = byElf4jLevel();
     @NonNull private final String name;
     @NonNull private final Level level;
     private final ExtendedLogger extendedLogger;
@@ -49,15 +49,7 @@ public class Log4jElf4jLogger implements Logger {
                 clazz == null ? StackLocatorUtil.getCallerClass(INSTANCE_CALLER_DEPTH).getName() : clazz.getName());
     }
 
-    private static Logger getLogger(String name) {
-        return getLogger(name, DEFAULT_LEVEL);
-    }
-
-    private static Logger getLogger(@NonNull String name, @NonNull Level level) {
-        return CACHED_LOGGERS.computeIfAbsent(new LoggerKey(name, level), k -> new Log4jElf4jLogger(k.name, k.level));
-    }
-
-    private static EnumMap<Level, org.apache.logging.log4j.Level> levelMap() {
+    private static EnumMap<Level, org.apache.logging.log4j.Level> byElf4jLevel() {
         EnumMap<Level, org.apache.logging.log4j.Level> levelMap = new EnumMap<>(Level.class);
         levelMap.put(TRACE, org.apache.logging.log4j.Level.TRACE);
         levelMap.put(DEBUG, org.apache.logging.log4j.Level.DEBUG);
@@ -66,6 +58,14 @@ public class Log4jElf4jLogger implements Logger {
         levelMap.put(ERROR, org.apache.logging.log4j.Level.ERROR);
         levelMap.put(OFF, org.apache.logging.log4j.Level.OFF);
         return levelMap;
+    }
+
+    private static Logger getLogger(@NonNull String name, @NonNull Level level) {
+        return CACHED_LOGGERS.computeIfAbsent(new LoggerKey(name, level), k -> new Log4jElf4jLogger(k.name, k.level));
+    }
+
+    private static Logger getLogger(String name) {
+        return getLogger(name, DEFAULT_LEVEL);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class Log4jElf4jLogger implements Logger {
 
     @Override
     public void log(Object message) {
-        extendedLogger.log(ELF4J_TO_LOG4J_LEVELS.get(this.level), message);
+        extendedLogger.log(LEVEL_MAP.get(this.level), message);
     }
 
     @Override
@@ -121,12 +121,12 @@ public class Log4jElf4jLogger implements Logger {
         if (isLevelDisabled()) {
             return;
         }
-        extendedLogger.log(ELF4J_TO_LOG4J_LEVELS.get(this.level), message.get());
+        extendedLogger.log(LEVEL_MAP.get(this.level), message.get());
     }
 
     @Override
     public void log(String message, Object... args) {
-        extendedLogger.log(ELF4J_TO_LOG4J_LEVELS.get(this.level), message, args);
+        extendedLogger.log(LEVEL_MAP.get(this.level), message, args);
     }
 
     @Override
@@ -134,19 +134,19 @@ public class Log4jElf4jLogger implements Logger {
         if (isLevelDisabled()) {
             return;
         }
-        extendedLogger.log(ELF4J_TO_LOG4J_LEVELS.get(this.level),
+        extendedLogger.log(LEVEL_MAP.get(this.level),
                 message,
                 Arrays.stream(args).map(Supplier::get).toArray(Object[]::new));
     }
 
     @Override
     public void log(Throwable t) {
-        extendedLogger.log(ELF4J_TO_LOG4J_LEVELS.get(this.level), t);
+        extendedLogger.log(LEVEL_MAP.get(this.level), t);
     }
 
     @Override
     public void log(Throwable t, String message) {
-        extendedLogger.log(ELF4J_TO_LOG4J_LEVELS.get(this.level), message, t);
+        extendedLogger.log(LEVEL_MAP.get(this.level), message, t);
     }
 
     @Override
@@ -154,12 +154,12 @@ public class Log4jElf4jLogger implements Logger {
         if (isLevelDisabled()) {
             return;
         }
-        extendedLogger.log(ELF4J_TO_LOG4J_LEVELS.get(this.level), message.get(), t);
+        extendedLogger.log(LEVEL_MAP.get(this.level), message.get(), t);
     }
 
     @Override
     public void log(Throwable t, String message, Object... args) {
-        extendedLogger.log(ELF4J_TO_LOG4J_LEVELS.get(this.level), new FormattedMessage(message, args, t));
+        extendedLogger.log(LEVEL_MAP.get(this.level), new FormattedMessage(message, args, t));
     }
 
     @Override
@@ -167,12 +167,12 @@ public class Log4jElf4jLogger implements Logger {
         if (isLevelDisabled()) {
             return;
         }
-        extendedLogger.log(ELF4J_TO_LOG4J_LEVELS.get(this.level),
+        extendedLogger.log(LEVEL_MAP.get(this.level),
                 new FormattedMessage(message, Arrays.stream(args).map(Supplier::get).toArray(Object[]::new), t));
     }
 
     private boolean isLevelDisabled() {
-        return !extendedLogger.isEnabled(ELF4J_TO_LOG4J_LEVELS.get(this.level));
+        return !extendedLogger.isEnabled(LEVEL_MAP.get(this.level));
     }
 
     @Value
