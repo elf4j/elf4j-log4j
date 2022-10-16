@@ -12,8 +12,9 @@ ELF4J API for logging can decide to use the LOG4J features at deployment time wi
 
 ## Prerequisite
 
-- Java 8 or better
-- LOG4J 2.19.0 or better
+- Java 8+
+- ELF4J 2.1.0+
+- LOG4J 2.19.0+
 
 ## Get it...
 
