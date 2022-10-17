@@ -12,10 +12,10 @@ import org.apache.logging.log4j.util.StackLocatorUtil;
 
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import static elf4j.Level.*;
 
@@ -59,7 +59,7 @@ class Log4jElf4jLogger implements Logger {
 
     private static EnumMap<Level, Map<String, Log4jElf4jLogger>> initCachedLoggers() {
         EnumMap<Level, Map<String, Log4jElf4jLogger>> cachedLoggers = new EnumMap<>(Level.class);
-        Stream.of(Level.values()).forEach(l -> cachedLoggers.put(l, new ConcurrentHashMap<>()));
+        EnumSet.allOf(Level.class).forEach(l -> cachedLoggers.put(l, new ConcurrentHashMap<>()));
         return cachedLoggers;
     }
 
