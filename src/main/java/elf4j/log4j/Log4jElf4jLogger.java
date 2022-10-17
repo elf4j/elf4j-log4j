@@ -22,10 +22,10 @@ import static elf4j.Level.*;
 @Immutable
 @ToString
 class Log4jElf4jLogger implements Logger {
-    private static final EnumMap<Level, Map<String, Log4jElf4jLogger>> CACHED_LOGGERS = initCachedLoggers();
     private static final Level DEFAULT_LEVEL = INFO;
     private static final int INSTANCE_CALLER_DEPTH = 4;
     private static final EnumMap<Level, org.apache.logging.log4j.Level> LEVEL_MAP = setLevelMap();
+    private static final EnumMap<Level, Map<String, Log4jElf4jLogger>> LOGGER_CACHE = initCachedLoggers();
     @NonNull private final String name;
     @NonNull private final Level level;
     private final ExtendedLogger extendedLogger;
@@ -50,7 +50,7 @@ class Log4jElf4jLogger implements Logger {
     }
 
     private static Log4jElf4jLogger getLogger(@NonNull String name, @NonNull Level level) {
-        return CACHED_LOGGERS.get(level).computeIfAbsent(name, k -> new Log4jElf4jLogger(k, level));
+        return LOGGER_CACHE.get(level).computeIfAbsent(name, k -> new Log4jElf4jLogger(k, level));
     }
 
     private static Log4jElf4jLogger getLogger(String name) {
@@ -58,9 +58,9 @@ class Log4jElf4jLogger implements Logger {
     }
 
     private static EnumMap<Level, Map<String, Log4jElf4jLogger>> initCachedLoggers() {
-        EnumMap<Level, Map<String, Log4jElf4jLogger>> cachedLoggers = new EnumMap<>(Level.class);
-        EnumSet.allOf(Level.class).forEach(level -> cachedLoggers.put(level, new ConcurrentHashMap<>()));
-        return cachedLoggers;
+        EnumMap<Level, Map<String, Log4jElf4jLogger>> loggerCache = new EnumMap<>(Level.class);
+        EnumSet.allOf(Level.class).forEach(level -> loggerCache.put(level, new ConcurrentHashMap<>()));
+        return loggerCache;
     }
 
     private static EnumMap<Level, org.apache.logging.log4j.Level> setLevelMap() {
