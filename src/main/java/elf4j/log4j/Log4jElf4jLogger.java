@@ -59,7 +59,7 @@ class Log4jElf4jLogger implements Logger {
 
     private static EnumMap<Level, Map<String, Log4jElf4jLogger>> initCachedLoggers() {
         EnumMap<Level, Map<String, Log4jElf4jLogger>> cachedLoggers = new EnumMap<>(Level.class);
-        EnumSet.allOf(Level.class).forEach(l -> cachedLoggers.put(l, new ConcurrentHashMap<>()));
+        EnumSet.allOf(Level.class).forEach(level -> cachedLoggers.put(level, new ConcurrentHashMap<>()));
         return cachedLoggers;
     }
 
