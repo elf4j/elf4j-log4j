@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class Log4jElf4jLoggerTest {
-    public static final Logger LOGGER = Logger.instance(Log4jElf4jLoggerTest.class);
+class Log4jLoggerTest {
+    public static final Logger LOGGER = Logger.instance(Log4jLoggerTest.class);
 
     @Nested
     class levels {

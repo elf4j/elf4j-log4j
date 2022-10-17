@@ -21,44 +21,44 @@ import static elf4j.Level.*;
 
 @Immutable
 @ToString
-class Log4jElf4jLogger implements Logger {
+class Log4jLogger implements Logger {
     private static final Level DEFAULT_LEVEL = INFO;
     private static final int INSTANCE_CALLER_DEPTH = 4;
     private static final EnumMap<Level, org.apache.logging.log4j.Level> LEVEL_MAP = setLevelMap();
-    private static final EnumMap<Level, Map<String, Log4jElf4jLogger>> LOGGER_CACHE = initLoggerCache();
+    private static final EnumMap<Level, Map<String, Log4jLogger>> LOGGER_CACHE = initLoggerCache();
     @NonNull private final String name;
     @NonNull private final Level level;
     private final ExtendedLogger extendedLogger;
 
-    private Log4jElf4jLogger(@NonNull String name, @NonNull Level level) {
+    private Log4jLogger(@NonNull String name, @NonNull Level level) {
         this.name = name;
         this.level = level;
         this.extendedLogger = LogManager.getContext().getLogger(name);
     }
 
-    static Log4jElf4jLogger instance() {
+    static Log4jLogger instance() {
         return getLogger(StackLocatorUtil.getCallerClass(INSTANCE_CALLER_DEPTH).getName());
     }
 
-    static Log4jElf4jLogger instance(String name) {
+    static Log4jLogger instance(String name) {
         return getLogger(name == null ? StackLocatorUtil.getCallerClass(INSTANCE_CALLER_DEPTH).getName() : name);
     }
 
-    static Log4jElf4jLogger instance(Class<?> clazz) {
+    static Log4jLogger instance(Class<?> clazz) {
         return getLogger(
                 clazz == null ? StackLocatorUtil.getCallerClass(INSTANCE_CALLER_DEPTH).getName() : clazz.getName());
     }
 
-    private static Log4jElf4jLogger getLogger(@NonNull String name, @NonNull Level level) {
-        return LOGGER_CACHE.get(level).computeIfAbsent(name, k -> new Log4jElf4jLogger(k, level));
+    private static Log4jLogger getLogger(@NonNull String name, @NonNull Level level) {
+        return LOGGER_CACHE.get(level).computeIfAbsent(name, k -> new Log4jLogger(k, level));
     }
 
-    private static Log4jElf4jLogger getLogger(String name) {
+    private static Log4jLogger getLogger(String name) {
         return getLogger(name, DEFAULT_LEVEL);
     }
 
-    private static EnumMap<Level, Map<String, Log4jElf4jLogger>> initLoggerCache() {
-        EnumMap<Level, Map<String, Log4jElf4jLogger>> loggerCache = new EnumMap<>(Level.class);
+    private static EnumMap<Level, Map<String, Log4jLogger>> initLoggerCache() {
+        EnumMap<Level, Map<String, Log4jLogger>> loggerCache = new EnumMap<>(Level.class);
         EnumSet.allOf(Level.class).forEach(level -> loggerCache.put(level, new ConcurrentHashMap<>()));
         return loggerCache;
     }

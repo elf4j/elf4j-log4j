@@ -6,16 +6,16 @@ import elf4j.spi.LoggerFactory;
 public class Log4jLoggerFactory implements LoggerFactory {
     @Override
     public Logger logger() {
-        return Log4jElf4jLogger.instance();
+        return Log4jLogger.instance();
     }
 
     @Override
     public Logger logger(String name) {
-        return Log4jElf4jLogger.instance(name);
+        return Log4jLogger.instance(name);
     }
 
     @Override
     public Logger logger(Class<?> clazz) {
-        return Log4jElf4jLogger.instance(clazz);
+        return Log4jLogger.instance(clazz);
     }
 }
