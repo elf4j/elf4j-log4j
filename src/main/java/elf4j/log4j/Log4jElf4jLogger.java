@@ -25,7 +25,7 @@ class Log4jElf4jLogger implements Logger {
     private static final Level DEFAULT_LEVEL = INFO;
     private static final int INSTANCE_CALLER_DEPTH = 4;
     private static final EnumMap<Level, org.apache.logging.log4j.Level> LEVEL_MAP = setLevelMap();
-    private static final EnumMap<Level, Map<String, Log4jElf4jLogger>> LOGGER_CACHE = initCachedLoggers();
+    private static final EnumMap<Level, Map<String, Log4jElf4jLogger>> LOGGER_CACHE = initLoggerCache();
     @NonNull private final String name;
     @NonNull private final Level level;
     private final ExtendedLogger extendedLogger;
@@ -57,7 +57,7 @@ class Log4jElf4jLogger implements Logger {
         return getLogger(name, DEFAULT_LEVEL);
     }
 
-    private static EnumMap<Level, Map<String, Log4jElf4jLogger>> initCachedLoggers() {
+    private static EnumMap<Level, Map<String, Log4jElf4jLogger>> initLoggerCache() {
         EnumMap<Level, Map<String, Log4jElf4jLogger>> loggerCache = new EnumMap<>(Level.class);
         EnumSet.allOf(Level.class).forEach(level -> loggerCache.put(level, new ConcurrentHashMap<>()));
         return loggerCache;
