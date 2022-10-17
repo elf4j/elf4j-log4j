@@ -15,6 +15,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import static elf4j.Level.*;
 
@@ -58,12 +59,7 @@ class Log4jElf4jLogger implements Logger {
 
     private static EnumMap<Level, Map<String, Log4jElf4jLogger>> initCachedLoggers() {
         EnumMap<Level, Map<String, Log4jElf4jLogger>> cachedLoggers = new EnumMap<>(Level.class);
-        cachedLoggers.put(TRACE, new ConcurrentHashMap<>());
-        cachedLoggers.put(DEBUG, new ConcurrentHashMap<>());
-        cachedLoggers.put(INFO, new ConcurrentHashMap<>());
-        cachedLoggers.put(WARN, new ConcurrentHashMap<>());
-        cachedLoggers.put(ERROR, new ConcurrentHashMap<>());
-        cachedLoggers.put(OFF, new ConcurrentHashMap<>());
+        Stream.of(Level.values()).forEach(l -> cachedLoggers.put(l, new ConcurrentHashMap<>()));
         return cachedLoggers;
     }
 
