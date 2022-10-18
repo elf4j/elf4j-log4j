@@ -28,7 +28,7 @@ class Log4jLogger implements Logger {
     private static final EnumMap<Level, Map<String, Log4jLogger>> LOGGER_CACHE = initLoggerCache();
     @NonNull private final String name;
     @NonNull private final Level level;
-    private final ExtendedLogger extendedLogger;
+    @NonNull private final ExtendedLogger extendedLogger;
 
     private Log4jLogger(@NonNull String name, @NonNull Level level) {
         this.name = name;
