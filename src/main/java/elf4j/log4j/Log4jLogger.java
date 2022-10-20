@@ -24,6 +24,7 @@ import static elf4j.Level.*;
 class Log4jLogger implements Logger {
     private static final String ARG_PLACEHOLDER = "{}";
     private static final Level DEFAULT_LEVEL = INFO;
+    private static final String EMPTY_MESSAGE = "";
     private static final String FQCN = Log4jLogger.class.getName();
     private static final int INSTANCE_CALLER_DEPTH = 4;
     private static final EnumMap<Level, org.apache.logging.log4j.Level> LEVEL_MAP = setLevelMap();
@@ -151,7 +152,7 @@ class Log4jLogger implements Logger {
 
     @Override
     public void log(Throwable t) {
-        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, "", t);
+        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, EMPTY_MESSAGE, t);
     }
 
     @Override
