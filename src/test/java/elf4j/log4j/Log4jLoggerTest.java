@@ -116,4 +116,46 @@ class Log4jLoggerTest {
             assertEquals("", Logger.instance(empty).getName());
         }
     }
+
+    @Nested
+    class readmeSamples {
+        private final Logger logger = Logger.instance(readmeSamples.class);
+
+        @Test
+        void messageAndArgs() {
+            logger.atInfo().log("info message");
+            logger.atLevel(Level.INFO).log("{} is a shorthand of {}", "atInfo()", "atLevel(Level.INFO)");
+            logger.atWarn()
+                    .log("warn message with supplier arg1 {}, arg2 {}, arg3 {}",
+                            () -> "a11111",
+                            () -> "a22222",
+                            () -> Arrays.stream(new Object[] { "a33333" }).collect(Collectors.toList()));
+        }
+
+        @Test
+        void throwableAndMessageAndArgs() {
+            logger.atInfo().log("let see immutability in action...");
+            Logger errorLogger = logger.atError();
+            Throwable ex = new Exception("ex message");
+            errorLogger.log(ex, "level set omitted, the log level is Level.ERROR");
+            errorLogger.atWarn()
+                    .log(ex,
+                            "the log level switched to WARN on the fly. that is, {} returns a {} and {} Logger {}",
+                            "atWarn()",
+                            "different",
+                            "immutable",
+                            "instance");
+            errorLogger.atError()
+                    .log(ex,
+                            "the atError() call is {} because the errorLogger instance is {}, and the instance's log level has always been Level.ERROR",
+                            "unnecessary",
+                            "immutable");
+            errorLogger.log(ex,
+                    "now at Level.ERROR, together with the exception stack trace, logging some items expensive to compute: item1 {}, item2 {}, item3 {}, item4 {}, ...",
+                    () -> "i11111",
+                    () -> "i22222",
+                    () -> Arrays.asList("i33333"),
+                    () -> Arrays.stream(new Object[] { "i44444" }).collect(Collectors.toList()));
+        }
+    }
 }
