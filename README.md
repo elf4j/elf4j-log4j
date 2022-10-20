@@ -23,10 +23,10 @@ code change.
 
 ## Use it...
 
-If you are using the ELF4J API for logging, and wish to select or change to use LOG4J as the run-time implementation, 
-then simply pack this binding JAR in the classpath when the application deploys. No code change needed. 
+If you are using the ELF4J API for logging, and wish to select or change to use LOG4J as the run-time implementation,
+then simply pack this binding JAR in the classpath when the application deploys. No code change needed.
 
-At compile time, the client code is unaware of this run-time logging service provider. Because of the ELF4J API,
-opting LOG4J as the logging implementation is a deployment-time decision.
+At compile time, the client code is unaware of this run-time logging service provider. Because of the ELF4J API, opting
+for LOG4J as the logging implementation is a deployment-time decision.
 
 The usual [LOG4J configuration](https://logging.apache.org/log4j/2.x/manual/configuration.html) applies.
