@@ -88,14 +88,6 @@ class Log4jLogger implements Logger {
     }
 
     @Override
-    public Logger atLevel(Level level) {
-        if (this.level == level) {
-            return this;
-        }
-        return getLogger(this.name, level);
-    }
-
-    @Override
     public Logger atTrace() {
         return atLevel(TRACE);
     }
@@ -183,6 +175,13 @@ class Log4jLogger implements Logger {
                 null,
                 new FormattedMessage(message, Arrays.stream(args).map(Supplier::get).toArray(Object[]::new)),
                 t);
+    }
+
+    private Logger atLevel(Level level) {
+        if (this.level == level) {
+            return this;
+        }
+        return getLogger(this.name, level);
     }
 
     private boolean isLevelDisabled() {
