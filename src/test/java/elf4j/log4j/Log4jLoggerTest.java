@@ -116,7 +116,6 @@ class Log4jLoggerTest {
         @Test
         void messageAndArgs() {
             logger.atInfo().log("info message");
-            logger.atInfo().log("{} is a shorthand of {}", "atInfo()", "atLevel(Level.INFO)");
             logger.atWarn()
                     .log("warn message with supplier arg1 {}, arg2 {}, arg3 {}",
                             () -> "a11111",
