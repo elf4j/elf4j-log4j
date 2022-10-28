@@ -14,7 +14,7 @@ code change.
 ## Prerequisite
 
 - Java 8+
-- [ELF4J](https://github.com/elf4j/elf4j-api) 3.0.0+
+- [ELF4J](https://github.com/elf4j/elf4j-api) 4.0.0+
 - LOG4J 2.19.0+
 
 ## Get it...
@@ -23,7 +23,7 @@ code change.
 
 ## Use it...
 
-If you are using the ELF4J API for logging, and wish to select or change to use LOG4J as the run-time implementation,
+If you are using the [ELF4J API](https://github.com/elf4j/elf4j-api#the-client-api) for logging, and wish to select or change to use LOG4J as the run-time implementation,
 then simply pack this binding JAR in the classpath when the application deploys. No code change needed. At compile time,
 the client code is unaware of this run-time logging service provider. Because of the ELF4J API, opting for LOG4J as the
 logging implementation is a deployment-time decision.
