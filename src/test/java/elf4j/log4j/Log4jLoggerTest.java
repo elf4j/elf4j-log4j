@@ -1,6 +1,5 @@
 package elf4j.log4j;
 
-import elf4j.Level;
 import elf4j.Logger;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,25 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class Log4jLoggerTest {
     public static final Logger LOGGER = Logger.instance(Log4jLoggerTest.class);
-
-    @Nested
-    class levels {
-
-        @Test
-        void optToSupplyDefaultLevelAsInfo() {
-            assertEquals(Level.INFO, LOGGER.getLevel());
-            LOGGER.log("opt to provide default level");
-        }
-
-        @Test
-        void noArgAtHonorsLeveOnMethodName() {
-            assertEquals(Level.TRACE, LOGGER.atTrace().getLevel());
-            assertEquals(Level.DEBUG, LOGGER.atDebug().getLevel());
-            assertEquals(Level.INFO, LOGGER.atInfo().getLevel());
-            assertEquals(Level.WARN, LOGGER.atWarn().getLevel());
-            assertEquals(Level.ERROR, LOGGER.atError().getLevel());
-        }
-    }
 
     @Nested
     class log {

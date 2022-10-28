@@ -78,16 +78,6 @@ class Log4jLogger implements Logger {
     }
 
     @Override
-    public @NonNull String getName() {
-        return this.name;
-    }
-
-    @Override
-    public @NonNull Level getLevel() {
-        return this.level;
-    }
-
-    @Override
     public Logger atTrace() {
         return atLevel(TRACE);
     }
@@ -110,6 +100,19 @@ class Log4jLogger implements Logger {
     @Override
     public Logger atError() {
         return atLevel(ERROR);
+    }
+
+    @Override
+    public @NonNull String getName() {
+        return this.name;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        if (this.level == OFF) {
+            return false;
+        }
+        return !isLevelDisabled();
     }
 
     @Override
