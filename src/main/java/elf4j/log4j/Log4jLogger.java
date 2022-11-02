@@ -130,7 +130,14 @@ class Log4jLogger implements Logger {
 
     @Override
     public void log(String message, Object... args) {
-        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, message, args);
+        if (isLevelDisabled()) {
+            return;
+        }
+        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, message, supply(args));
+    }
+
+    private Object[] supply(Object[] args) {
+        return Arrays.stream(args).map(arg -> arg instanceof Supplier<?> ? ((Supplier<?>) arg).get() : arg).toArray();
     }
 
     @Override
@@ -165,7 +172,14 @@ class Log4jLogger implements Logger {
 
     @Override
     public void log(Throwable t, String message, Object... args) {
-        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, new FormattedMessage(message, args), t);
+        if (isLevelDisabled()) {
+            return;
+        }
+        extendedLogger.logIfEnabled(FQCN,
+                LEVEL_MAP.get(this.level),
+                null,
+                new FormattedMessage(message, supply(args)),
+                t);
     }
 
     @Override

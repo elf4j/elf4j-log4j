@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import static elf4j.Logger.arg;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class Log4jLoggerTest {
@@ -94,39 +95,53 @@ class Log4jLoggerTest {
         private final Logger logger = Logger.instance(readmeSamples.class);
 
         @Test
-        void messageAndArgs() {
+        void messagesArgsAndGuards() {
             logger.atInfo().log("info message");
             logger.atWarn()
-                    .log("warn message with supplier arg1 {}, arg2 {}, arg3 {}",
-                            () -> "a11111",
-                            () -> "a22222",
-                            () -> Arrays.stream(new Object[] { "a33333" }).collect(Collectors.toList()));
+                    .log("message arguments of Supplier<?> and other Object types can be mixed and matched, e.g. arg1 {}, arg2 {}, arg3 {}",
+                            "a11111",
+                            "a22222",
+                            arg(() -> Arrays.stream(new Object[] { "a33333 supplier" }).collect(Collectors.toList())));
+            Logger debug = logger.atDebug();
+            if (debug.isEnabled()) {
+                debug.log("a {} guarded by a {}, so {} is created {} DEBUG {} is {}",
+                        "long message",
+                        "level check",
+                        "no message object",
+                        "unless",
+                        "level",
+                        "enabled");
+            }
+            debug.log(() -> "alternative to the level guard, using a supplier function should achieve the same goal, pending quality of the logging provider");
         }
 
         @Test
         void throwableAndMessageAndArgs() {
-            logger.atInfo().log("let see immutability in action...");
-            Logger errorLogger = logger.atError();
+            logger.atInfo().log("let's see immutability in action...");
+            Logger error = logger.atError();
+            error.log("this is an immutable logger instance whose level is Level.ERROR");
             Throwable ex = new Exception("ex message");
-            errorLogger.log(ex, "level set omitted, the log level is Level.ERROR");
-            errorLogger.atWarn()
+            error.log(ex, "level set omitted but we know the level is Level.ERROR");
+            error.atWarn()
                     .log(ex,
                             "the log level switched to WARN on the fly. that is, {} returns a {} and {} Logger {}",
                             "atWarn()",
                             "different",
                             "immutable",
                             "instance");
-            errorLogger.atError()
+            error.atError()
                     .log(ex,
-                            "the atError() call is {} because the errorLogger instance is {}, and the instance's log level has always been Level.ERROR",
+                            "here the {} call is {} because the {} instance is {}, and the instance's log level has and will always be Level.ERROR",
+                            "atError()",
                             "unnecessary",
+                            "error logger",
                             "immutable");
-            errorLogger.log(ex,
+            error.log(ex,
                     "now at Level.ERROR, together with the exception stack trace, logging some items expensive to compute: item1 {}, item2 {}, item3 {}, item4 {}, ...",
-                    () -> "i11111",
-                    () -> "i22222",
-                    () -> Arrays.asList("i33333"),
-                    () -> Arrays.stream(new Object[] { "i44444" }).collect(Collectors.toList()));
+                    "i11111",
+                    arg(() -> "i22222"),
+                    "i33333",
+                    arg(() -> Arrays.stream(new Object[] { "i44444" }).collect(Collectors.toList())));
         }
     }
 }
