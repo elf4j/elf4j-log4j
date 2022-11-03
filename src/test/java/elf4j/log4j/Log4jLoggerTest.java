@@ -1,5 +1,6 @@
 package elf4j.log4j;
 
+import elf4j.Level;
 import elf4j.Logger;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -7,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static elf4j.util.MessageArguments.arg;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 class Log4jLoggerTest {
     public static final Logger LOGGER = Logger.instance(Log4jLoggerTest.class);
@@ -96,21 +97,19 @@ class Log4jLoggerTest {
 
         @Test
         void messagesArgsAndGuards() {
+            logger.atWarn().log("message with arguments - arg1 {}, arg2 {}, arg3 {}", "a11111", "a22222", "a33333");
             logger.atInfo().log("info message");
-            logger.atWarn()
-                    .log("message arguments of Supplier<?> and other Object types can be mixed and matched, e.g. arg1 {}, arg2 {}, arg3 {}",
-                            "a11111",
-                            "a22222",
-                            arg(() -> Arrays.stream(new Object[] { "a33333 supplier" }).collect(Collectors.toList())));
             Logger debug = logger.atDebug();
+            assertNotSame(logger, debug);
+            assertEquals(logger.getName(), debug.getName());
+            assertEquals(Level.DEBUG, debug.getLevel());
             if (debug.isEnabled()) {
-                debug.log("a {} guarded by a {}, so {} is created {} DEBUG {} is {}",
+                debug.log("a {} guarded by a {}, so {} is created {} DEBUG level is {}",
                         "long message",
                         "level check",
                         "no message object",
                         "unless",
-                        "level",
-                        "enabled");
+                        "enabled by the configuration of the logging provider");
             }
             debug.log(() -> "alternative to the level guard, using a supplier function should achieve the same goal, pending quality of the logging provider");
         }
@@ -138,10 +137,10 @@ class Log4jLoggerTest {
                             "immutable");
             error.log(ex,
                     "now at Level.ERROR, together with the exception stack trace, logging some items expensive to compute: item1 {}, item2 {}, item3 {}, item4 {}, ...",
-                    "i11111",
-                    arg(() -> "i22222"),
-                    "i33333",
-                    arg(() -> Arrays.stream(new Object[] { "i44444" }).collect(Collectors.toList())));
+                    () -> "i11111",
+                    () -> "i22222",
+                    () -> "i33333",
+                    () -> Arrays.stream(new Object[] { "i44444" }).collect(Collectors.toList()));
         }
     }
 }

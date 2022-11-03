@@ -18,7 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 import static elf4j.Level.*;
-import static elf4j.util.MessageArguments.supply;
 
 @Immutable
 @ToString
@@ -139,7 +138,7 @@ class Log4jLogger implements Logger {
         if (isLevelDisabled()) {
             return;
         }
-        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, message, supply(args));
+        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, message, args);
     }
 
     @Override
@@ -177,11 +176,7 @@ class Log4jLogger implements Logger {
         if (isLevelDisabled()) {
             return;
         }
-        extendedLogger.logIfEnabled(FQCN,
-                LEVEL_MAP.get(this.level),
-                null,
-                new FormattedMessage(message, supply(args)),
-                t);
+        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, new FormattedMessage(message, args), t);
     }
 
     @Override
