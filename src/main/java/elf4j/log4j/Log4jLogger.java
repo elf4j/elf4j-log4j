@@ -154,11 +154,17 @@ class Log4jLogger implements Logger {
 
     @Override
     public void log(Throwable t) {
+        if (!this.isEnabled()) {
+            return;
+        }
         extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, EMPTY_MESSAGE, t);
     }
 
     @Override
     public void log(Throwable t, Object message) {
+        if (!this.isEnabled()) {
+            return;
+        }
         extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, message, t);
     }
 
