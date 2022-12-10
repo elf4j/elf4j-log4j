@@ -22,9 +22,7 @@ import static elf4j.Level.*;
 @Immutable
 @ToString
 class Log4jLogger implements Logger {
-    private static final String ARG_PLACEHOLDER = "{}";
     private static final Level DEFAULT_LEVEL = INFO;
-    private static final String EMPTY_MESSAGE = "";
     private static final String FQCN = Log4jLogger.class.getName();
     private static final int INSTANCE_CALLER_DEPTH = 4;
     private static final EnumMap<Level, org.apache.logging.log4j.Level> LEVEL_MAP = setLevelMap();
@@ -79,6 +77,29 @@ class Log4jLogger implements Logger {
         return levelMap;
     }
 
+    private static Object supply(Object o) {
+        return o instanceof Supplier<?> ? ((Supplier<?>) o).get() : o;
+    }
+
+    private static Object[] supply(Object[] objects) {
+        return Arrays.stream(objects).map(Log4jLogger::supply).toArray();
+    }
+
+    @Override
+    public @NonNull String getName() {
+        return this.name;
+    }
+
+    @Override
+    public @NonNull Level getLevel() {
+        return this.level;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+
     @Override
     public Logger atTrace() {
         return atLevel(TRACE);
@@ -105,31 +126,8 @@ class Log4jLogger implements Logger {
     }
 
     @Override
-    public @NonNull String getName() {
-        return this.name;
-    }
-
-    @Override
-    public @NonNull Level getLevel() {
-        return this.level;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return this.enabled;
-    }
-
-    @Override
     public void log(Object message) {
-        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, ARG_PLACEHOLDER, message);
-    }
-
-    @Override
-    public void log(Supplier<?> message) {
-        if (!this.isEnabled()) {
-            return;
-        }
-        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, ARG_PLACEHOLDER, message.get());
+        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, supply(message), null);
     }
 
     @Override
@@ -137,19 +135,7 @@ class Log4jLogger implements Logger {
         if (!this.isEnabled()) {
             return;
         }
-        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, message, args);
-    }
-
-    @Override
-    public void log(String message, Supplier<?>... args) {
-        if (!this.isEnabled()) {
-            return;
-        }
-        extendedLogger.logIfEnabled(FQCN,
-                LEVEL_MAP.get(this.level),
-                null,
-                message,
-                Arrays.stream(args).map(Supplier::get).toArray(Object[]::new));
+        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, message, supply(args));
     }
 
     @Override
@@ -157,7 +143,7 @@ class Log4jLogger implements Logger {
         if (!this.isEnabled()) {
             return;
         }
-        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, EMPTY_MESSAGE, t);
+        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, t.getMessage(), t);
     }
 
     @Override
@@ -165,15 +151,7 @@ class Log4jLogger implements Logger {
         if (!this.isEnabled()) {
             return;
         }
-        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, message, t);
-    }
-
-    @Override
-    public void log(Throwable t, Supplier<?> message) {
-        if (!this.isEnabled()) {
-            return;
-        }
-        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, message.get(), t);
+        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, supply(message), t);
     }
 
     @Override
@@ -181,18 +159,10 @@ class Log4jLogger implements Logger {
         if (!this.isEnabled()) {
             return;
         }
-        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, new FormattedMessage(message, args), t);
-    }
-
-    @Override
-    public void log(Throwable t, String message, Supplier<?>... args) {
-        if (!this.isEnabled()) {
-            return;
-        }
         extendedLogger.logIfEnabled(FQCN,
                 LEVEL_MAP.get(this.level),
                 null,
-                new FormattedMessage(message, Arrays.stream(args).map(Supplier::get).toArray(Object[]::new)),
+                new FormattedMessage(message, supply(args)),
                 t);
     }
 
