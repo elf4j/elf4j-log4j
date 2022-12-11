@@ -31,12 +31,14 @@ provider. Because of the ELF4J API, opting for LOG4J as the logging implementati
 
 The usual [LOG4J configuration](https://logging.apache.org/log4j/2.x/manual/configuration.html) applies.
 
-With Maven, in addition to the ELF4J API compile-scope dependency, an end-user application would use this provider as a runtime-scope dependency:
+With Maven, in addition to the ELF4J API compile-scope dependency, an end-user application would use this provider as a
+runtime-scope dependency:
 
-```xml
+```html
+
 <dependency>
-  <groupId>io.github.elf4j</groupId>
-  <artifactId>elf4j-api</artifactId>
+    <groupId>io.github.elf4j</groupId>
+    <artifactId>elf4j-api</artifactId>
 </dependency>
 
 <dependency>
