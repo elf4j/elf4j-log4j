@@ -27,10 +27,10 @@ class Log4jLogger implements Logger {
     private static final int INSTANCE_CALLER_DEPTH = 4;
     private static final EnumMap<Level, org.apache.logging.log4j.Level> LEVEL_MAP = setLevelMap();
     private static final EnumMap<Level, Map<String, Log4jLogger>> LOGGER_CACHE = initLoggerCache();
-    @NonNull private final String name;
-    @NonNull private final Level level;
-    @NonNull private final ExtendedLogger extendedLogger;
     private final boolean enabled;
+    @NonNull private final ExtendedLogger extendedLogger;
+    @NonNull private final Level level;
+    @NonNull private final String name;
 
     private Log4jLogger(@NonNull String name, @NonNull Level level) {
         this.name = name;
@@ -86,28 +86,13 @@ class Log4jLogger implements Logger {
     }
 
     @Override
-    public @NonNull String getName() {
-        return this.name;
-    }
-
-    @Override
-    public @NonNull Level getLevel() {
-        return this.level;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return this.enabled;
-    }
-
-    @Override
-    public Logger atTrace() {
-        return atLevel(TRACE);
-    }
-
-    @Override
     public Logger atDebug() {
         return atLevel(DEBUG);
+    }
+
+    @Override
+    public Logger atError() {
+        return atLevel(ERROR);
     }
 
     @Override
@@ -116,13 +101,28 @@ class Log4jLogger implements Logger {
     }
 
     @Override
+    public Logger atTrace() {
+        return atLevel(TRACE);
+    }
+
+    @Override
     public Logger atWarn() {
         return atLevel(WARN);
     }
 
     @Override
-    public Logger atError() {
-        return atLevel(ERROR);
+    public @NonNull Level getLevel() {
+        return this.level;
+    }
+
+    @Override
+    public @NonNull String getName() {
+        return this.name;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
     }
 
     @Override
