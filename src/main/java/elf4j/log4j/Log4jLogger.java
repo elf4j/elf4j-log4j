@@ -43,15 +43,6 @@ class Log4jLogger implements Logger {
         return getLogger(StackLocatorUtil.getCallerClass(INSTANCE_CALLER_DEPTH).getName());
     }
 
-    static Log4jLogger instance(String name) {
-        return getLogger(name == null ? StackLocatorUtil.getCallerClass(INSTANCE_CALLER_DEPTH).getName() : name);
-    }
-
-    static Log4jLogger instance(Class<?> clazz) {
-        return getLogger(
-                clazz == null ? StackLocatorUtil.getCallerClass(INSTANCE_CALLER_DEPTH).getName() : clazz.getName());
-    }
-
     private static Log4jLogger getLogger(@NonNull String name, @NonNull Level level) {
         return LOGGER_CACHE.get(level).computeIfAbsent(name, k -> new Log4jLogger(k, level));
     }
@@ -113,11 +104,6 @@ class Log4jLogger implements Logger {
     @Override
     public @NonNull Level getLevel() {
         return this.level;
-    }
-
-    @Override
-    public @NonNull String getName() {
-        return this.name;
     }
 
     @Override

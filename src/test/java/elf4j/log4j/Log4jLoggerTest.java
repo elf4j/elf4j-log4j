@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 class Log4jLoggerTest {
-    public static final Logger LOGGER = Logger.instance(Log4jLoggerTest.class);
+    public static final Logger LOGGER = Logger.instance();
 
     @Nested
     class log {
@@ -74,27 +74,8 @@ class Log4jLoggerTest {
     }
 
     @Nested
-    class name {
-        @Test
-        void blankOrEmptyNamesStayAsIs() {
-            String blank = "   ";
-            assertEquals(blank, Logger.instance(blank).getName());
-            String empty = "";
-            assertEquals("", Logger.instance(empty).getName());
-        }
-
-        @Test
-        void loggerNameForNullOrNoargInstanceCaller() {
-            String thisClassName = this.getClass().getName();
-            assertEquals(thisClassName, Logger.instance((Class<?>) null).getName());
-            assertEquals(thisClassName, Logger.instance((String) null).getName());
-            assertEquals(thisClassName, Logger.instance().getName());
-        }
-    }
-
-    @Nested
     class readmeSamples {
-        private final Logger logger = Logger.instance(readmeSamples.class);
+        private final Logger logger = Logger.instance();
 
         @Test
         void messagesArgsAndGuards() {
@@ -102,7 +83,6 @@ class Log4jLoggerTest {
             logger.atInfo().log("info message");
             Logger debug = logger.atDebug();
             assertNotSame(logger, debug);
-            assertEquals(logger.getName(), debug.getName());
             assertEquals(Level.DEBUG, debug.getLevel());
             if (debug.isEnabled()) {
                 debug.log("a {} guarded by a {}, so {} is created {} DEBUG level is {}",
