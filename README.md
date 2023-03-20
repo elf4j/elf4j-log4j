@@ -5,7 +5,7 @@
 An adapter to use [LOG4J](https://logging.apache.org/log4j/2.x/) as service provider and log engine for
 the [ELF4J](https://github.com/elf4j/elf4j) (Easy Logging Facade for Java) API
 
-## User story
+## User Story
 
 As an application developer using the [ELF4J](https://github.com/elf4j/elf4j) API, I want to have the option of
 selecting [LOG4J](https://logging.apache.org/log4j/2.x/) as my log engine, at application deploy time without code
@@ -15,11 +15,11 @@ change or re-compile.
 
 - Java 8+
 
-## Get it...
+## Get It...
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.elf4j/elf4j-log4j.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.github.elf4j%22%20AND%20a:%22elf4j-log4j%22)
 
-## Use it...
+## Use It...
 
 If you are using the [ELF4J API](https://github.com/elf4j/elf4j/) for logging, and wish to select or change to use LOG4J
 as the run-time implementation, then simply pack this logging service provider in the classpath when the application
