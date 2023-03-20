@@ -77,28 +77,11 @@ class Log4jLogger implements Logger {
     }
 
     @Override
-    public Logger atDebug() {
-        return atLevel(DEBUG);
-    }
-
-    @Override
-    public Logger atError() {
-        return atLevel(ERROR);
-    }
-
-    @Override
-    public Logger atInfo() {
-        return atLevel(INFO);
-    }
-
-    @Override
-    public Logger atTrace() {
-        return atLevel(TRACE);
-    }
-
-    @Override
-    public Logger atWarn() {
-        return atLevel(WARN);
+    public Logger atLevel(Level level) {
+        if (this.level == level) {
+            return this;
+        }
+        return getLogger(this.name, level);
     }
 
     @Override
@@ -150,12 +133,5 @@ class Log4jLogger implements Logger {
                 null,
                 new FormattedMessage(message, supply(args)),
                 t);
-    }
-
-    private Logger atLevel(Level level) {
-        if (this.level == level) {
-            return this;
-        }
-        return getLogger(this.name, level);
     }
 }

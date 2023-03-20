@@ -2,20 +2,18 @@
 
 # elf4j-log4j
 
-The [LOG4J](https://logging.apache.org/log4j/2.x/) service provider binding for the Easy Logging Facade for
-Java ([ELF4J](https://github.com/elf4j/elf4j)) SPI
+An adapter to use [LOG4J](https://logging.apache.org/log4j/2.x/) as service provider and log engine for
+the [ELF4J](https://github.com/elf4j/elf4j) (Easy Logging Facade for Java) API
 
 ## User story
 
-As a service provider of the [ELF4J](https://github.com/elf4j/elf4j) SPI, I want to bind the logging capabilities of
-LOG4J to the ELF4J client application via the
-Java [Service Provider Framework](https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html), so that any
-application using the ELF4J API for logging can opt to use LOG4J at deployment time without code change.
+As an application developer using the [ELF4J](https://github.com/elf4j/elf4j) API, I want to have the option of
+selecting [LOG4J](https://logging.apache.org/log4j/2.x/) as my log engine, at application deploy time without code
+change or re-compile.
 
 ## Prerequisite
 
 - Java 8+
-- LOG4J 2.19.0+
 
 ## Get it...
 
@@ -24,9 +22,9 @@ application using the ELF4J API for logging can opt to use LOG4J at deployment t
 ## Use it...
 
 If you are using the [ELF4J API](https://github.com/elf4j/elf4j/) for logging, and wish to select or change to use LOG4J
-as the run-time implementation, then simply pack this binding JAR in the classpath when the application deploys. No code
-change needed. At compile time, the client code is unaware of this run-time logging service provider. With the ELF4J
-facade, opting for LOG4J as the logging implementation is a deployment-time decision.
+as the run-time implementation, then simply pack this logging service provider in the classpath when the application
+deploys. No code change needed. At compile time, the client code is unaware of this run-time logging service provider.
+With the ELF4J facade, opting for LOG4J as the logging implementation is a deployment-time decision.
 
 The usual [LOG4J configuration](https://logging.apache.org/log4j/2.x/manual/configuration.html) applies.
 
