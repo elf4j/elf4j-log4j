@@ -2,7 +2,7 @@
 
 # elf4j-log4j
 
-An adapter to use [LOG4J](https://logging.apache.org/log4j/2.x/) as service provider and log engine for
+An adapter to use [LOG4J](https://logging.apache.org/log4j/2.x/) as service provider and runtime log engine for
 the [ELF4J](https://github.com/elf4j/elf4j) (Easy Logging Facade for Java) API
 
 ## User Story
