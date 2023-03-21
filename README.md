@@ -1,5 +1,3 @@
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.elf4j/elf4j-log4j.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.github.elf4j%22%20AND%20a:%22elf4j-log4j%22)
-
 # elf4j-log4j
 
 An adapter to use [LOG4J](https://logging.apache.org/log4j/2.x/) as service provider and runtime log engine for
