@@ -1,3 +1,28 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2022 Qingtian Wang
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 package elf4j.log4j;
 
 import elf4j.Level;
@@ -27,7 +52,6 @@ class Log4jLogger implements Logger {
     private static final int INSTANCE_CALLER_DEPTH = 4;
     private static final EnumMap<Level, org.apache.logging.log4j.Level> LEVEL_MAP = setLevelMap();
     private static final EnumMap<Level, Map<String, Log4jLogger>> LOGGER_CACHE = initLoggerCache();
-    private final boolean enabled;
     @NonNull private final ExtendedLogger extendedLogger;
     @NonNull private final Level level;
     @NonNull private final String name;
@@ -36,7 +60,6 @@ class Log4jLogger implements Logger {
         this.name = name;
         this.level = level;
         this.extendedLogger = LogManager.getContext().getLogger(name);
-        this.enabled = this.extendedLogger.isEnabled(LEVEL_MAP.get(this.level));
     }
 
     static Log4jLogger instance() {
@@ -76,6 +99,10 @@ class Log4jLogger implements Logger {
         return Arrays.stream(objects).map(Log4jLogger::supply).toArray();
     }
 
+    private static org.apache.logging.log4j.Level translate(Level level) {
+        return LEVEL_MAP.get(level);
+    }
+
     @Override
     public Logger atLevel(Level level) {
         if (this.level == level) {
@@ -91,12 +118,12 @@ class Log4jLogger implements Logger {
 
     @Override
     public boolean isEnabled() {
-        return this.enabled;
+        return this.extendedLogger.isEnabled(translate(this.level));
     }
 
     @Override
     public void log(Object message) {
-        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, supply(message), null);
+        extendedLogger.logIfEnabled(FQCN, translate(this.level), null, supply(message), null);
     }
 
     @Override
@@ -104,7 +131,7 @@ class Log4jLogger implements Logger {
         if (!this.isEnabled()) {
             return;
         }
-        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, message, supply(args));
+        extendedLogger.logIfEnabled(FQCN, translate(this.level), null, message, supply(args));
     }
 
     @Override
@@ -112,7 +139,7 @@ class Log4jLogger implements Logger {
         if (!this.isEnabled()) {
             return;
         }
-        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, t.getMessage(), t);
+        extendedLogger.logIfEnabled(FQCN, translate(this.level), null, t.getMessage(), t);
     }
 
     @Override
@@ -120,7 +147,7 @@ class Log4jLogger implements Logger {
         if (!this.isEnabled()) {
             return;
         }
-        extendedLogger.logIfEnabled(FQCN, LEVEL_MAP.get(this.level), null, supply(message), t);
+        extendedLogger.logIfEnabled(FQCN, translate(this.level), null, supply(message), t);
     }
 
     @Override
@@ -128,10 +155,6 @@ class Log4jLogger implements Logger {
         if (!this.isEnabled()) {
             return;
         }
-        extendedLogger.logIfEnabled(FQCN,
-                LEVEL_MAP.get(this.level),
-                null,
-                new FormattedMessage(message, supply(args)),
-                t);
+        extendedLogger.logIfEnabled(FQCN, translate(this.level), null, new FormattedMessage(message, supply(args)), t);
     }
 }
